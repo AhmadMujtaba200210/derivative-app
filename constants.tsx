@@ -88,25 +88,25 @@ The risk is that the Basis changes unpredictably.`
         id: "optimal-hedge",
         title: "Optimal Hedge Ratio",
         description: "Calculating the Minimum Variance Hedge Ratio.",
-        content: `When there is no futures contract on the specific asset being hedged (Cross Hedging), we must calculate the Optimal Hedge Ratio ($h^*$) to minimize the variance of the hedged position.
+        content: `When there is no futures contract on the specific asset being hedged (Cross Hedging), we must calculate the Optimal Hedge Ratio (h*) to minimize the variance of the hedged position.
 
 **Formula:**
-$$h^* = \\rho \\frac{\\sigma_S}{\\sigma_F}$$
+h* = rho * (sigma_S / sigma_F)
 
 Where:
-- $\\rho$ (rho): Correlation coefficient between the change in spot price and the change in futures price.
-- $\\sigma_S$: Standard deviation of $\\Delta S$.
-- $\\sigma_F$: Standard deviation of $\\Delta F$.
+- **rho:** Correlation coefficient between the change in spot price and the change in futures price.
+- **sigma_S:** Standard deviation of change in Spot Price.
+- **sigma_F:** Standard deviation of change in Futures Price.
 
-**Optimal Number of Contracts ($N^*$):**
-$$N^* = h^* \\frac{Q_A}{Q_F}$$
+**Optimal Number of Contracts (N*):**
+N* = h* * (Q_A / Q_F)
 
 Where:
-- $Q_A$: Size of position being hedged.
-- $Q_F$: Size of one futures contract.
+- **Q_A:** Size of position being hedged.
+- **Q_F:** Size of one futures contract.
 
 **Tailing the Hedge:**
-If daily settlement is considered, the formula is slightly adjusted to account for the interest on margin variation, but standard $h^*$ is the primary industry metric.`
+If daily settlement is considered, the formula is slightly adjusted to account for the interest on margin variation, but standard h* is the primary industry metric.`
       }
     ]
   },
@@ -118,42 +118,42 @@ If daily settlement is considered, the formula is slightly adjusted to account f
         id: "put-call-parity",
         title: "Put-Call Parity",
         description: "The no-arbitrage relationship between calls, puts, and the underlying.",
-        content: `Put-Call Parity is a fundamental relationship between the price of a European call option ($c$) and a European put option ($p$) with the same strike price ($K$) and time to maturity ($T$).
+        content: `Put-Call Parity is a fundamental relationship between the price of a European call option (c) and a European put option (p) with the same strike price (K) and time to maturity (T).
 
 **The Equation:**
-$$c + K e^{-rT} = p + S_0$$
+c + K * e^(-rT) = p + S0
 
 **Intuition (Arbitrage Portfolios):**
 Consider two portfolios:
-- **Portfolio A:** One European call option + Cash equal to $K e^{-rT}$.
-- **Portfolio B:** One European put option + One share of the stock ($S_0$).
+- **Portfolio A:** One European call option + Cash equal to K * e^(-rT).
+- **Portfolio B:** One European put option + One share of the stock (S0).
 
-At expiration ($T$):
-- If $S_T > K$: Call is exercised (worth $S_T - K$). Cash is worth $K$. Total = $S_T$.
-- If $S_T < K$: Put is exercised (worth $K - S_T$). Share is worth $S_T$. Total = $K$.
-Both portfolios are worth $\\max(S_T, K)$. Therefore, they must cost the same today.
+At expiration (T):
+- If ST > K: Call is exercised (worth ST - K). Cash is worth K. Total = ST.
+- If ST < K: Put is exercised (worth K - ST). Share is worth ST. Total = K.
+Both portfolios are worth max(ST, K). Therefore, they must cost the same today.
 
 **Arbitrage Opportunity:**
-If $c + K e^{-rT} < p + S_0$, you can buy Portfolio A (Long Call, Save Cash) and sell Portfolio B (Short Put, Short Stock) to lock in a risk-free profit.`
+If c + K * e^(-rT) < p + S0, you can buy Portfolio A (Long Call, Save Cash) and sell Portfolio B (Short Put, Short Stock) to lock in a risk-free profit.`
       },
       {
         id: "option-bounds",
         title: "Trading Strategies: Spreads",
         description: "Bull Spreads, Bear Spreads, and Butterfly Spreads.",
         content: `**1. Bull Spread:**
-- **Strategy:** Buy a call with a low strike ($K_1$) and sell a call with a higher strike ($K_2$).
+- **Strategy:** Buy a call with a low strike (K1) and sell a call with a higher strike (K2).
 - **View:** Moderately bullish. Caps profit but reduces cost of the trade.
-- **Payoff:** $\\max(0, S_T - K_1) - \\max(0, S_T - K_2)$.
+- **Payoff:** max(0, ST - K1) - max(0, ST - K2).
 
 **2. Bear Spread:**
-- **Strategy:** Buy a put with a high strike ($K_2$) and sell a put with a lower strike ($K_1$).
+- **Strategy:** Buy a put with a high strike (K2) and sell a put with a lower strike (K1).
 - **View:** Moderately bearish.
 - **Goal:** Profit from price decline with limited risk.
 
 **3. Butterfly Spread:**
-- **Strategy:** Buy a call at $K_1$, buy a call at $K_3$, and sell two calls at $K_2$ (where $K_2$ is halfway between $K_1$ and $K_3$).
+- **Strategy:** Buy a call at K1, buy a call at K3, and sell two calls at K2 (where K2 is halfway between K1 and K3).
 - **View:** Neutral. Expects low volatility.
-- **Profit:** Maximum when $S_T = K_2$. Loss is limited to the initial premiums paid.
+- **Profit:** Maximum when ST = K2. Loss is limited to the initial premiums paid.
 
 **4. Straddle:**
 - **Strategy:** Buy a call and a put with the same Strike and Expiration.
@@ -172,38 +172,41 @@ If $c + K e^{-rT} < p + S_0$, you can buy Portfolio A (Long Call, Save Cash) and
         description: "Lognormal property and risk-neutral valuation.",
         content: `**The Lognormal Property:**
 The BSM model assumes stock prices follow a Geometric Brownian Motion. This implies that the logarithm of the stock price is normally distributed.
-$$\\ln S_T \\sim N[\\ln S_0 + (\\mu - \\sigma^2/2)T, \\sigma^2 T]$$
+
+ln(ST) follows a normal distribution with:
+- Mean: ln(S0) + (mu - sigma^2/2) * T
+- Variance: sigma^2 * T
 
 **Key Assumptions:**
 1. Stock price follows a random walk (Markov process).
 2. No arbitrage opportunities.
-3. Constant risk-free rate ($r$) and volatility ($\\sigma$).
+3. Constant risk-free rate (r) and volatility (sigma).
 4. No transaction costs or taxes.
 5. Short selling is permitted.
-6. The stock pays no dividends during the option's life (though the model can be adjusted for yield $q$).
+6. The stock pays no dividends during the option's life (though the model can be adjusted for yield q).
 
 **Risk-Neutral Valuation:**
-A powerful result in derivatives is that we can value an option assuming the expected return on the stock is the risk-free rate ($r$). The risk preference of investors does not affect the price of the derivative.`
+A powerful result in derivatives is that we can value an option assuming the expected return on the stock is the risk-free rate (r). The risk preference of investors does not affect the price of the derivative.`
       },
       {
         id: "bsm-formula",
         title: "The BSM Formulas",
         description: "The closed-form solution for European options.",
-        content: `**Pricing a European Call ($c$):**
-$$c = S_0 N(d_1) - K e^{-rT} N(d_2)$$
+        content: `**Pricing a European Call (c):**
+c = S0 * N(d1) - K * e^(-rT) * N(d2)
 
-**Pricing a European Put ($p$):**
-$$p = K e^{-rT} N(-d_2) - S_0 N(-d_1)$$
+**Pricing a European Put (p):**
+p = K * e^(-rT) * N(-d2) - S0 * N(-d1)
 
 **Where:**
-$$d_1 = \\frac{\\ln(S_0/K) + (r + \\sigma^2/2)T}{\\sigma \\sqrt{T}}$$
-$$d_2 = d_1 - \\sigma \\sqrt{T}$$
+d1 = [ln(S0/K) + (r + sigma^2/2) * T] / [sigma * sqrt(T)]
+d2 = d1 - sigma * sqrt(T)
 
 **Interpretation:**
-- $N(d_2)$: The probability that the call option will be exercised in a risk-neutral world.
-- $N(d_1)$: Sensitivity of the option price to the stock price (related to Delta).
-- $S_0 N(d_1)$: Expected value of receiving the stock.
-- $K e^{-rT} N(d_2)$: Expected cost of paying the strike price.
+- **N(d2):** The probability that the call option will be exercised in a risk-neutral world.
+- **N(d1):** Sensitivity of the option price to the stock price (related to Delta).
+- **S0 * N(d1):** Expected value of receiving the stock.
+- **K * e^(-rT) * N(d2):** Expected cost of paying the strike price.
 
 This formula revolutionized finance by providing a way to hedge and price risk precisely.`
       }
@@ -217,15 +220,15 @@ This formula revolutionized finance by providing a way to hedge and price risk p
         id: "delta-gamma",
         title: "Delta (Δ) and Gamma (Γ)",
         description: "Managing directional risk and curvature risk.",
-        content: `**1. Delta ($\\Delta$):**
+        content: `**1. Delta:**
 Rate of change of the option price with respect to the asset price.
-- **Call Delta:** $N(d_1)$ (between 0 and 1).
-- **Put Delta:** $N(d_1) - 1$ (between -1 and 0).
+- **Call Delta:** N(d1) (between 0 and 1).
+- **Put Delta:** N(d1) - 1 (between -1 and 0).
 - **Delta Hedging:** To make a portfolio Delta Neutral, if you are short an option with Delta 0.6, you must buy 0.6 shares of the stock.
 
-**2. Gamma ($\\Gamma$):**
+**2. Gamma:**
 Rate of change of Delta with respect to the asset price (Curvature).
-- $\\Gamma = \\frac{N'(d_1)}{S_0 \\sigma \\sqrt{T}}$
+- Gamma = N'(d1) / (S0 * sigma * sqrt(T))
 - If Gamma is high, Delta changes rapidly, meaning you must rebalance your hedge frequently.
 - Gamma is highest for At-The-Money (ATM) options near expiration.
 - A Delta-Neutral portfolio is only protected against *small* price moves. Gamma protection covers larger moves.`
@@ -234,19 +237,19 @@ Rate of change of Delta with respect to the asset price (Curvature).
         id: "theta-vega-rho",
         title: "Theta, Vega, and Rho",
         description: "Time decay, volatility risk, and interest rate sensitivity.",
-        content: `**1. Theta ($\\Theta$):**
+        content: `**1. Theta:**
 Rate of change of option price with respect to time (Time Decay).
 - Usually negative for long option positions.
 - "Time is the enemy of the option buyer."
 - Theta is not a hedgeable risk in the same way (time passes deterministically), but it explains P&L attribution.
 
-**2. Vega ($\\nu$):**
-Rate of change of option price with respect to Volatility ($\\sigma$).
+**2. Vega:**
+Rate of change of option price with respect to Volatility (sigma).
 - Vega is highest for ATM options.
 - Essential for "Volatility Trading." If you buy a straddle, you are "Long Vega" (you want volatility to rise).
 
-**3. Rho ($\\rho$):**
-Rate of change of option price with respect to the risk-free rate ($r$).
+**3. Rho:**
+Rate of change of option price with respect to the risk-free rate (r).
 - Less significant in low-interest environments.
 - Call options generally have positive Rho; Puts have negative Rho.`
       }
@@ -271,7 +274,7 @@ OTM Puts usually have much higher implied volatility than OTM Calls.
 - This creates a downward sloping volatility curve with respect to strike price.
 
 **Term Structure of Volatility:**
-Implied volatility also varies with time to maturity. A "Volatility Surface" maps Implied Vol against Strike ($K$) and Maturity ($T$).`
+Implied volatility also varies with time to maturity. A "Volatility Surface" maps Implied Vol against Strike (K) and Maturity (T).`
       },
       {
         id: "value-at-risk",
@@ -286,7 +289,7 @@ Implied volatility also varies with time to maturity. A "Volatility Surface" map
 
 **2. Model-Building (Variance-Covariance) Approach:**
 - Assumes returns are normally distributed.
-- VaR = $\\alpha \\times \\sigma_{portfolio} \\times \\text{Value}$.
+- VaR = alpha * sigma_portfolio * Value
 - Requires a correlation matrix between all assets in the portfolio.
 
 **3. Expected Shortfall (ES):**
