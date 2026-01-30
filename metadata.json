@@ -1,0 +1,8 @@
+{
+  "name": "Copy of QuantFlow: Derivatives Mastery",
+  "description": "An interactive learning platform for mastering derivatives trading, from basic fundamentals to advanced quantitative strategies using AI-driven tutoring and real-time payoff visualizations.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
