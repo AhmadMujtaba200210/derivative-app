@@ -1,35 +1,60 @@
+/**
+ * Secure API client that communicates with backend proxy
+ * No API keys are exposed client-side
+ */
 
-import { GoogleGenAI } from "@google/genai";
+import { sanitizeInput, limitConversationHistory } from '../utils/validation';
 
-const getAIClient = () => {
-  return new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-};
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-export const chatWithQuant = async (messages: { role: 'user' | 'assistant', content: string }[]) => {
-  const ai = getAIClient();
-  
+export interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+/**
+ * Sends chat messages to backend API proxy
+ * All API key handling is done server-side
+ */
+export const chatWithQuant = async (messages: ChatMessage[]): Promise<string> => {
   try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
-      contents: {
-        parts: [{ text: `You are "Professor Hull AI," a digital twin of the world's leading derivatives expert. 
-        Your knowledge is strictly based on the latest editions of "Options, Futures, and Other Derivatives."
-        
-        Your goals:
-        - Provide rigorous yet intuitive explanations of financial engineering concepts.
-        - Help students with Greek calculations, BSM derivations, and hedging strategies.
-        - Always emphasize the importance of arbitrage-free pricing.
-        - If a student asks about modern markets, reference the SOFR transition and current volatility environments.
-        
-        Current conversation: ${JSON.stringify(messages)}` }]
+    // Sanitize all messages before sending
+    const sanitizedMessages = messages.map(msg => ({
+      role: msg.role,
+      content: sanitizeInput(msg.content)
+    }));
+
+    // Limit conversation history
+    const limitedMessages = limitConversationHistory(sanitizedMessages);
+
+    const response = await fetch(`${API_BASE_URL}/api/chat`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-      config: {
-        thinkingConfig: { thinkingBudget: 4000 }
-      }
+      body: JSON.stringify({ messages: limitedMessages }),
     });
-    return response.text;
+
+    if (!response.ok) {
+      if (response.status === 429) {
+        const data = await response.json();
+        return `Rate limit exceeded. Please wait ${data.retryAfter || 60} seconds before trying again.`;
+      }
+
+      throw new Error(`API request failed with status ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.response || "I'm having trouble thinking. Volatility is high!";
+
   } catch (error) {
-    console.error("Gemini Error:", error);
+    console.error("Chat API Error:", error);
+
+    // User-friendly error messages
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      return "Unable to connect to the server. Please check your connection.";
+    }
+
     return "Connection to the trading desk lost. Re-establishing link...";
   }
 };

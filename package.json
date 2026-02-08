@@ -4,19 +4,29 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "vite",
+    "dev:backend": "tsx watch server/index.ts",
     "build": "vite build",
-    "preview": "vite preview"
+    "build:backend": "tsc server/index.ts --outDir server/dist",
+    "preview": "vite preview",
+    "start:backend": "node server/dist/index.js"
   },
   "dependencies": {
-    "react": "^19.2.4",
-    "recharts": "^3.7.0",
     "@google/genai": "^1.38.0",
-    "react-dom": "^19.2.4"
+    "concurrently": "^9.2.1",
+    "cors": "^2.8.5",
+    "dompurify": "^3.2.3",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "recharts": "^3.7.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
     "@vitejs/plugin-react": "^5.0.0",
+    "tsx": "^4.21.0",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
   }
